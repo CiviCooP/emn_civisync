@@ -1,0 +1,14 @@
+{
+  "name": "drupal/emn_civisync",
+  "type": "drupal-module",
+  "description": "Reads CiviCRM organizations, writes them to the drupal website",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/emn_civisync",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/emn_civisync",
+    "source": "http://cgit.drupalcode.org/emn_civisync"
+  },
+  "require": { }
+}

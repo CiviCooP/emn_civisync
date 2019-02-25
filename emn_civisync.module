@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains emn_civisync.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function emn_civisync_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the emn_civisync module.
+    case 'help.page.emn_civisync':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Reads CiviCRM organizations, writes them to the drupal website') . '</p>';
+      return $output;
+
+    default:
+  }
+}

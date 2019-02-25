@@ -1,0 +1,5 @@
+name: 'EMN CiviCRM Synchronization'
+type: module
+description: 'Reads CiviCRM organizations, writes them to the drupal website'
+core: 8.x
+package: 'EMN'
