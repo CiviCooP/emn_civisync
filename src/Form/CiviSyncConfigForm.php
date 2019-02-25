@@ -1,4 +1,7 @@
 <?php
+/**
+ * Copyright (c) 2019.  Klaas Eikelboom (klaas.eikelboom@civicoop.org)
+ */
 
 namespace Drupal\emn_civisync\Form;
 
@@ -30,7 +33,17 @@ class CiviSyncConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+
+    $civicrm = new \Drupal\emn_civisync\CiviCRMService($this->configFactory());
+
     $config = $this->config('emn_civisync.civisyncconfig');
+
+    $form['info'] = [
+      '#type' => 'markup' ,
+      '#markup' => $civicrm->check(),
+
+    ];
+
     $form['url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Site url'),

@@ -1,4 +1,4 @@
 services:
-  civicrm:
+  emn_civisync.civicrm:
     class: Drupal\emn_civisync\CiviCRMService
-    arguments: []
+    arguments: ['@config.factory']
