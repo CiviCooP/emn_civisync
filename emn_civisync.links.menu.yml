@@ -1,0 +1,7 @@
+emn_civisync.civi_sync_config_form:
+  title: 'CiviCRM Sync'
+  route_name: emn_civisync.civi_sync_config_form
+  description: 'CiviCRM Sync Configuration'
+  parent: system.admin_config_system
+  weight: 99
+

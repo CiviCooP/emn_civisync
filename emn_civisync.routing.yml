@@ -1,0 +1,11 @@
+
+emn_civisync.civi_sync_config_form:
+  path: '/admin/config/emn_civisync/civisyncconfig'
+  defaults:
+    _form: '\Drupal\emn_civisync\Form\CiviSyncConfigForm'
+    _title: 'CiviSyncConfigForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE
+
