@@ -25,7 +25,13 @@ class OrganisationUpdateService {
     } else {
       $this->messages[] = "\"{$orgn['contact_id']} - {$orgn['organization_name']} unknown type {$orgn['type_of_organization']}";
     }
- //   $node -> set('field_membership_type',$this->lookUpTag($orgn['membership_type'],'membership_type'));
+    $membership_type_tid = $this->lookUpTag($orgn['membership_type'],'membership_type');
+    if($membership_type_tid) {
+      $node -> set('field_membership_type', $membership_type_tid);
+    } else {
+      $this->messages[] = "\"{$orgn['contact_id']} - {$orgn['organization_name']} unknown membership type {$orgn['membership_type']}";
+    }
+
     $node -> set('field_address',
       [
         'country_code' => $orgn['country_code'],
@@ -108,6 +114,39 @@ class OrganisationUpdateService {
 
   public function messages(){
     return $this->messages;
+  }
+
+  public function batchUpdate($orgn, &$context){
+    $message = 'Syncing '.$orgn['organization_name'];
+    $this->update($orgn);
+    $context['message'] = $message;
+    $context['results'][] = $orgn['contact_id'];
+   }
+
+  public function finished($success, $results, $operations){
+    if ($success) {
+      drupal_set_message('Processed '.count($results).' organizations');
+      foreach($this->messages() as $message){
+        drupal_set_message($message);
+      }
+    }
+    else {
+      drupal_set_message('Finished with Error');
+    }
+  }
+
+  public function batch($orgns){
+
+    $operations = [];
+    foreach($orgns as $orgn){
+      $operations[] = [[$this,'batchUpdate'], [$orgn]];
+    }
+
+    return [
+      'title' => t('Synchronizing organisations'),
+      'operations' => $operations,
+      'finished' =>[$this,'finished'],
+    ];
   }
 
 }
