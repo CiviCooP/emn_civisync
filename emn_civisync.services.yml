@@ -2,3 +2,6 @@ services:
   emn_civisync.civicrm:
     class: Drupal\emn_civisync\CiviCRMService
     arguments: ['@config.factory']
+  emn_civisync.organisation_updater:
+    class: Drupal\emn_civisync\OrganisationUpdateService
+    arguments: []

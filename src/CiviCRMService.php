@@ -24,6 +24,12 @@ class CiviCRMService {
     $this->entityQuery = $factory->get('entity.query');
   }
 
+  /**
+   * Executes a rest call to the connected CiviCRM system
+   * @param $action
+   *
+   * @return array|mixed
+   */
   public function rest($action){
     $url= $this->config->get('url');
     $key = $this->config->get('key');
@@ -42,6 +48,10 @@ class CiviCRMService {
     return json_decode($result,true);
   }
 
+  /**
+   * Purpose - check if all the parameters are correct - and give some valuable feedback
+   * @return string
+   */
   public function check(){
     $result = $this->rest('ping');
     if($result['is_error']){
@@ -49,6 +59,22 @@ class CiviCRMService {
     } else {
       return 'OK';
     }
+  }
+
+  public function memberlist($contact_id = NULL){
+    $result = $this->rest('list');
+    if(isset($contact_id)){
+      $found = null;
+      foreach($result['values'] as $value){
+        if($value['contact_id']==$contact_id){
+          $found=$value;
+        }
+      }
+      return $found;
+    } else {
+      return $result['values'];
+    }
+
   }
 
 }

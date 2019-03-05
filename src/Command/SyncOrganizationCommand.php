@@ -7,8 +7,10 @@ namespace Drupal\emn_civisync\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 use Drupal\Console\Core\Command\Command;
 use Drupal\Console\Core\Command\ContainerAwareCommand;
+
 use Drupal\Console\Annotations\DrupalCommand;
 
 /**
@@ -22,10 +24,13 @@ use Drupal\Console\Annotations\DrupalCommand;
 class SyncOrganizationCommand extends ContainerAwareCommand {
 
   private $civi;
+  private $updater;
 
-  public function __construct($civi) {
+
+  public function __construct($civi,$updater) {
     parent::__construct();
     $this->civi=$civi;
+    $this->updater=$updater;
   }
 
   /**
@@ -34,6 +39,7 @@ class SyncOrganizationCommand extends ContainerAwareCommand {
   protected function configure() {
     $this
       ->setName('civisync:orgn')
+      ->addArgument('contact_id',InputArgument::OPTIONAL,'proces only one contact_id, goed for testing')
       ->setDescription($this->trans('commands.civisync.orgn.description'));
   }
 
@@ -49,7 +55,20 @@ class SyncOrganizationCommand extends ContainerAwareCommand {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
+
     $this->getIo()->info('execute');
-    $this->getIo()->info($this->civi->check());
+    $orgns = $this->civi->memberlist();
+
+    $queue = \Drupal::queue('sync_contact');
+    $queue->createQueue();
+
+    foreach($orgns as $orgn){
+      $this->updater->update($orgn);
+      $queue->createItem($orgn);
+      // $this->getIo()->info("{$orgn['contact_id']} - {$orgn['organization_name']}");
+    }
+    foreach($this->updater->messages() as $message){
+      $this->getIo()->warning($message);
+    }
   }
 }

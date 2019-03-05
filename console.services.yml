@@ -1,6 +1,6 @@
 services:
   emn_civisync.civisync_orgn:
     class: Drupal\emn_civisync\Command\SyncOrganizationCommand
-    arguments: ['@emn_civisync.civicrm']
+    arguments: ['@emn_civisync.civicrm','@emn_civisync.organisation_updater']
     tags:
       - { name: drupal.command }

@@ -41,7 +41,6 @@ class CiviSyncConfigForm extends ConfigFormBase {
     $form['info'] = [
       '#type' => 'markup' ,
       '#markup' => $civicrm->check(),
-
     ];
 
     $form['url'] = [
