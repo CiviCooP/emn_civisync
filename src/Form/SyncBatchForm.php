@@ -1,4 +1,7 @@
 <?php
+/**
+ * Copyright (c) 2019.  Klaas Eikelboom (klaas.eikelboom@civicoop.org)
+ */
 
 namespace Drupal\emn_civisync\Form;
 

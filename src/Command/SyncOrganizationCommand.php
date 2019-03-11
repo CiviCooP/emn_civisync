@@ -8,10 +8,7 @@ namespace Drupal\emn_civisync\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Drupal\Console\Core\Command\Command;
 use Drupal\Console\Core\Command\ContainerAwareCommand;
-
-use Drupal\Console\Annotations\DrupalCommand;
 
 /**
  * Class SyncOrganizationCommand.

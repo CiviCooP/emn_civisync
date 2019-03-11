@@ -1,4 +1,7 @@
 <?php
+/**
+ * Copyright (c) 2019.  Klaas Eikelboom (klaas.eikelboom@civicoop.org)
+ */
 
 namespace Drupal\emn_civisync;
 
@@ -11,6 +14,10 @@ class OrganisationUpdateService {
 
   private $messages = [];
 
+  /**
+   * @param \Drupal\node\Entity\Node $node
+   * @param $orgn
+   */
   private function setNode(Node $node, $orgn){
     $node -> set('title',$orgn['organization_name']);
     $node -> set('field_description',$orgn['description']);
@@ -57,6 +64,12 @@ class OrganisationUpdateService {
 
   }
 
+  /**
+   * Download a logo for a organization
+   * @param $orgn
+   *
+   * @return int|string|null
+   */
   public function loadFile($orgn){
     $uri = $orgn['logo'];
     $extension = explode('.',$uri);
@@ -66,6 +79,13 @@ class OrganisationUpdateService {
     return $file->id();
   }
 
+  /**
+   * Find the tag Id in a vocabulaire
+   * @param $tag
+   * @param $vocabulaire
+   *
+   * @return mixed
+   */
   public function lookUpTag($tag, $vocabulaire){
     $terms = taxonomy_term_load_multiple_by_name($tag,$vocabulaire);
     $keys = array_keys($terms);
@@ -73,6 +93,12 @@ class OrganisationUpdateService {
     return $tid;
   }
 
+  /**
+   * Update an organization (if not not found create it).
+   * @param $orgn
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
   public function update($orgn){
     $contact_id = $orgn['contact_id'];
 
@@ -96,6 +122,11 @@ class OrganisationUpdateService {
     }
   }
 
+  /**
+   * @param $contact_id
+   *
+   * @return string
+   */
   public function show($contact_id){
     $query =  \Drupal::service('entity.query')->get('node');
     $node_ids = $query->condition('type','organization')
@@ -111,10 +142,19 @@ class OrganisationUpdateService {
     }
   }
 
+  /**
+   * @return array
+   */
   public function messages(){
     return $this->messages;
   }
 
+  /**
+   * @param $orgn
+   * @param $context
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
   public function batchUpdate($orgn, &$context){
     $message = 'Syncing '.$orgn['organization_name'];
     $this->update($orgn);
@@ -122,6 +162,11 @@ class OrganisationUpdateService {
     $context['results'][] = $orgn['contact_id'];
    }
 
+  /**
+   * @param $success
+   * @param $results
+   * @param $operations
+   */
   public function finished($success, $results, $operations){
     if ($success) {
       drupal_set_message('Processed '.count($results).' organizations');
@@ -134,6 +179,11 @@ class OrganisationUpdateService {
     }
   }
 
+  /**
+   * @param $orgns
+   *
+   * @return array
+   */
   public function batch($orgns){
 
     $operations = [];
@@ -148,7 +198,13 @@ class OrganisationUpdateService {
     ];
   }
 
-  public function deleteNode($nodeId,&$context){
+  /**
+   * @param $nodeId
+   * @param $context
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function deleteNode($nodeId, &$context){
     $message = 'Deleting node '.$nodeId;
     $node = Node::load($nodeId);
     $node->delete();
@@ -156,6 +212,9 @@ class OrganisationUpdateService {
     $context['results'][] = $nodeId;
   }
 
+  /**
+   * @return array
+   */
   public function deleteBatch(){
     $query =  \Drupal::service('entity.query')->get('node');
     $nodeIds = $query->condition('type','organization') -> execute();

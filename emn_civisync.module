@@ -1,10 +1,12 @@
 <?php
+/**
+ * Copyright (c) 2019.  Klaas Eikelboom (klaas.eikelboom@civicoop.org)
+ */
 
 /**
  * @file
  * Contains emn_civisync.module.
  */
-
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
