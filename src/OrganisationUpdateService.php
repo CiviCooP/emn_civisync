@@ -3,7 +3,6 @@
 namespace Drupal\emn_civisync;
 
 use \Drupal\node\Entity\Node;
-use \Drupal\file\Entity\File;
 
 /**
  * Class OrganisationUpdateService.
@@ -147,6 +146,32 @@ class OrganisationUpdateService {
       'operations' => $operations,
       'finished' =>[$this,'finished'],
     ];
+  }
+
+  public function deleteNode($nodeId,&$context){
+    $message = 'Deleting node '.$nodeId;
+    $node = Node::load($nodeId);
+    $node->delete();
+    $context['message'] = $message;
+    $context['results'][] = $nodeId;
+  }
+
+  public function deleteBatch(){
+    $query =  \Drupal::service('entity.query')->get('node');
+    $nodeIds = $query->condition('type','organization') -> execute();
+
+    $operations = [];
+    foreach($nodeIds as $nodeId){
+      $operations[] = [[$this,'deleteNode'], [$nodeId]];
+    }
+
+    return [
+      'title' => t('Deleting organisations'),
+      'operations' => $operations,
+      'finished' =>[$this,'finished'],
+    ];
+
+
   }
 
 }
