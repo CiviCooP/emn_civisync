@@ -32,6 +32,9 @@ class OrganisationUpdateService {
       $this->messages[] = "\"{$orgn['contact_id']} - {$orgn['organization_name']} unknown type {$orgn['type_of_organization']}";
     }
 
+    $membership_type_tid = $this->lookUpTag('Member','membership_type');
+    $node -> set('field_membership_type', $membership_type_tid);
+
     $node -> set('field_address',
       [
         'country_code' => $orgn['country_code'],
