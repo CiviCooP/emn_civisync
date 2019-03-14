@@ -32,20 +32,6 @@ class OrganisationUpdateService {
       $this->messages[] = "\"{$orgn['contact_id']} - {$orgn['organization_name']} unknown type {$orgn['type_of_organization']}";
     }
 
-    if($orgn['membership_type']=='Partner ++'){
-      $orgn['membership_type'] = 'Partner';
-    }
-    if($orgn['membership_type']=='Practitioner ++'){
-      $orgn['membership_type'] = 'Practitioner';
-    }
-
-    $membership_type_tid = $this->lookUpTag($orgn['membership_type'],'membership_type');
-    if($membership_type_tid) {
-      $node -> set('field_membership_type', $membership_type_tid);
-    } else {
-      $this->messages[] = "\"{$orgn['contact_id']} - {$orgn['organization_name']} unknown membership type {$orgn['membership_type']}";
-    }
-
     $node -> set('field_address',
       [
         'country_code' => $orgn['country_code'],
