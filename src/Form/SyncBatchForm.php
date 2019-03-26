@@ -32,16 +32,6 @@ class SyncBatchForm extends FormBase {
       '#markup' => 'Download and insert member organizations from the CRM (including logos)'.'<br/>',
     ];
 
-    $form['options'] = [
-      '#type' => 'radios',
-      '#title' => 'What action do you want to execute',
-      '#options' => [
-        'D' => 'Delete Members',
-        'S' => 'Sync Members',
-      ],
-      '#default_value' => 'S'
-    ];
-
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Execute'),
@@ -63,11 +53,7 @@ class SyncBatchForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $civicrm = new \Drupal\emn_civisync\CiviCRMService($this->configFactory());
     $updater = new OrganisationUpdateService();
-    if($form_state->getValue('options')=='S') {
-      batch_set($updater->batch($civicrm->memberlist()));
-    } else {
-      batch_set($updater->deleteBatch());
-    }
+    batch_set($updater->batch($civicrm->memberlist()));
   }
 
 }

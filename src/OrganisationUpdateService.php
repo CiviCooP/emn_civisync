@@ -20,6 +20,7 @@ class OrganisationUpdateService {
    */
   private function setNode(Node $node, $orgn){
     $node -> set('title',$orgn['organization_name']);
+    $node -> set('field_contact_id',$orgn['contact_id']);
     $node -> set('field_description',$orgn['description']);
     $node -> set('field_email',$orgn['email']);
     $node -> set('field_telephone_number',$orgn['phone']);
@@ -105,17 +106,21 @@ class OrganisationUpdateService {
       ->execute();
 
     if(empty($node_ids)){
-      $node = Node::create(
-        ['type'=>'organization',
-         'field_contact_id'=>$contact_id
-        ]);
-      $this->setNode($node,$orgn);
-      $node->save();
+      $query =  \Drupal::service('entity.query')->get('node');
+      $organization_name = $orgn['organization_name'];
+      $node_ids = $query->condition('type','organization')
+        ->condition('title',$organization_name)
+        ->execute();
+    }
+
+    if(empty($node_ids)){
+      $this->messages[]= $orgn['organization_name']. ' could not be found';
     } else {
+
       $node_id = reset($node_ids);
       $node = Node::load($node_id);
-      $this->setNode($node,$orgn);
-      $node -> save();
+      $this->setNode($node, $orgn);
+      $node->save();
     }
   }
 
@@ -140,13 +145,6 @@ class OrganisationUpdateService {
   }
 
   /**
-   * @return array
-   */
-  public function messages(){
-    return $this->messages;
-  }
-
-  /**
    * @param $orgn
    * @param $context
    *
@@ -156,7 +154,11 @@ class OrganisationUpdateService {
     $message = 'Syncing '.$orgn['organization_name'];
     $this->update($orgn);
     $context['message'] = $message;
-    $context['results'][] = $orgn['contact_id'];
+    $context['results']['count'] = isset( $context['results']['count'])? $context['results']['count']+1:1;
+    if(!isset($context['results']['messages'])){
+      $context['results']['messages'] = [];
+    }
+    $context['results']['messages']=array_merge( $context['results']['messages'],$this->messages);
    }
 
   /**
@@ -166,10 +168,11 @@ class OrganisationUpdateService {
    */
   public function finished($success, $results, $operations){
     if ($success) {
-      drupal_set_message('Processed '.count($results).' organizations');
-      foreach($this->messages() as $message){
+      drupal_set_message('Processed '.$results['count'].' organizations');
+      foreach($results['messages'] as $message){
         drupal_set_message($message);
       }
+      SyncLogger::getInstance()->clear();
     }
     else {
       drupal_set_message('Finished with Error');
