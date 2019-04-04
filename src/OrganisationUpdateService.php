@@ -97,7 +97,7 @@ class OrganisationUpdateService {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function update($orgn){
+  public function update($orgn,$option){
     $contact_id = $orgn['contact_id'];
 
     $query =  \Drupal::service('entity.query')->get('node');
@@ -113,10 +113,17 @@ class OrganisationUpdateService {
         ->execute();
     }
 
-    if(empty($node_ids)){
-      $this->messages[]= $orgn['organization_name']. ' could not be found';
+    if(empty($node_ids) && $option=='S') {
+      $this->messages[] = $orgn['organization_name'] . ' could not be found';
+    } elseif(empty($node_ids) && $option=='C') {
+      $this->messages[] = $orgn['organization_name'] . ' not found and created';
+      $node = Node::create(
+        ['type'=>'organization',
+          'field_contact_id'=>$contact_id
+        ]);
+      $this->setNode($node,$orgn);
+      $node->save();
     } else {
-
       $node_id = reset($node_ids);
       $node = Node::load($node_id);
       $this->setNode($node, $orgn);
@@ -150,9 +157,9 @@ class OrganisationUpdateService {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function batchUpdate($orgn, &$context){
+  public function batchUpdate($orgn, $option, &$context){
     $message = 'Syncing '.$orgn['organization_name'];
-    $this->update($orgn);
+    $this->update($orgn,$option);
     $context['message'] = $message;
     $context['results']['count'] = isset( $context['results']['count'])? $context['results']['count']+1:1;
     if(!isset($context['results']['messages'])){
@@ -184,11 +191,11 @@ class OrganisationUpdateService {
    *
    * @return array
    */
-  public function batch($orgns){
+  public function batch($orgns,$option){
 
     $operations = [];
     foreach($orgns as $orgn){
-      $operations[] = [[$this,'batchUpdate'], [$orgn]];
+      $operations[] = [[$this,'batchUpdate'], [$orgn, $option]];
     }
 
     return [
