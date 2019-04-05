@@ -9,15 +9,6 @@ emn_civisync.civi_sync_config_form:
   options:
     _admin_route: TRUE
 
-
-emn_civisync.test_page_controller_showResult:
-  path: '/emn_civisync/testpage'
-  defaults:
-    _controller: '\Drupal\emn_civisync\Controller\TestPageController::showResult'
-    _title: 'Test Page'
-  requirements:
-    _permission: 'access content'
-
 emn_civisync.sync_batch_form:
   path: '/emn_civisync/form/sync_batch'
   defaults:
